@@ -27,7 +27,7 @@ import org.mtransit.parser.mt.data.MTripStop;
 
 // http://data.whitehorse.ca/
 // http://ww3.whitehorse.ca/Features/GIS/GoogleTransit/Google_transit_feed_docs.zip
-public class WhiteTransitBusAgencyTools extends DefaultAgencyTools {
+public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
 		if (args == null || args.length == 0) {
@@ -36,7 +36,7 @@ public class WhiteTransitBusAgencyTools extends DefaultAgencyTools {
 			args[1] = "../../mtransitapps/ca-whitehorse-transit-bus-android/res/raw/";
 			args[2] = ""; // files-prefix
 		}
-		new WhiteTransitBusAgencyTools().start(args);
+		new WhitehorseTransitBusAgencyTools().start(args);
 	}
 
 	private HashSet<String> serviceIds;
