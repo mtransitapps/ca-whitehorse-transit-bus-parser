@@ -1,6 +1,7 @@
 package org.mtransit.parser.ca_whitehorse_transit_bus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +22,7 @@ import org.mtransit.parser.gtfs.data.GStop;
 import org.mtransit.parser.gtfs.data.GTrip;
 import org.mtransit.parser.gtfs.data.GTripStop;
 import org.mtransit.parser.mt.data.MAgency;
+import org.mtransit.parser.mt.data.MDirectionType;
 import org.mtransit.parser.mt.data.MRoute;
 import org.mtransit.parser.mt.data.MTrip;
 import org.mtransit.parser.mt.data.MTripStop;
@@ -118,9 +120,62 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 		return null;
 	}
 
+	private static final String SEP = "/";
+	private static final String EXPRESS = "Exp";
+	private static final String COPPER_RIDGE = "Copper Rdg";
+	private static final String COPPER_RIDGE_GRANGER = COPPER_RIDGE + SEP + "Granger";
+	private static final String PORTER_CREEK = "Porter Crk";
+	private static final String PORTER_CREEK_EXPRESS = PORTER_CREEK + " " + EXPRESS;
+	private static final String RIVERDALE = "Riverdale";
+	private static final String RIVERDALE_NORTH = RIVERDALE + " N";
+	private static final String RIVERDALE_SOUTH = RIVERDALE + " S";
+	private static final String RR_MC_INTYRE_HILLCREST = "RR" + SEP + "McIntyre" + SEP + "Hillcrest";
+	private static final String TAKHINI_YUKON_COLLEGE = "Takhini" + SEP + "Yukon College";
+	private static final String LOBIRD_COPPER_RIDGE_EXPRESS = "Lobird" + SEP + COPPER_RIDGE + " " + EXPRESS;
+
 	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
+		map2.put(1l, new RouteTripSpec(1l, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, PORTER_CREEK_EXPRESS, //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, RIVERDALE_NORTH) //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { "16", "46", "17" })) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { "17", "3", "16" })) //
+				.compileBothTripSort());
+		map2.put(2l, new RouteTripSpec(2l, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, COPPER_RIDGE_GRANGER, //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, RIVERDALE_SOUTH) //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { "16", "51", "17" })) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { "17", "60", "16" })) //
+				.compileBothTripSort());
+		map2.put(3l, new RouteTripSpec(3l, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, RR_MC_INTYRE_HILLCREST, //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, RIVERDALE_NORTH) //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { "16", "87", "17" })) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { "17", "83", "16" })) //
+				.compileBothTripSort());
+		map2.put(5l, new RouteTripSpec(5l, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, TAKHINI_YUKON_COLLEGE, //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, LOBIRD_COPPER_RIDGE_EXPRESS) //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { "16", "146", "17" })) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { "17", "128", "16" })) //
+				.compileBothTripSort());
+		map2.put(6l, new RouteTripSpec(6l, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "PM", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "AM") //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { "139", "38", "141" })) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { "141", "58", "139" })) //
+				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
 	}
 
