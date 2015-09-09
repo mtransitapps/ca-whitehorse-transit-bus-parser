@@ -120,15 +120,15 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 		return null;
 	}
 
-	private static final String SEP = "/";
-	private static final String EXPRESS = "Exp";
+	private static final String SEP = " - "; // same as GTFS
+	private static final String EXPRESS = "Express";
 	private static final String COPPER_RIDGE = "Copper Rdg";
 	private static final String COPPER_RIDGE_GRANGER = COPPER_RIDGE + SEP + "Granger";
 	private static final String PORTER_CREEK = "Porter Crk";
 	private static final String PORTER_CREEK_EXPRESS = PORTER_CREEK + " " + EXPRESS;
 	private static final String RIVERDALE = "Riverdale";
-	private static final String RIVERDALE_NORTH = RIVERDALE + " N";
-	private static final String RIVERDALE_SOUTH = RIVERDALE + " S";
+	private static final String RIVERDALE_NORTH = RIVERDALE + " North";
+	private static final String RIVERDALE_SOUTH = RIVERDALE + " South";
 	private static final String RR_MC_INTYRE_HILLCREST = "RR" + SEP + "McIntyre" + SEP + "Hillcrest";
 	private static final String TAKHINI_YUKON_COLLEGE = "Takhini" + SEP + "Yukon College";
 	private static final String LOBIRD_COPPER_RIDGE_EXPRESS = "Lobird" + SEP + COPPER_RIDGE + " " + EXPRESS;
