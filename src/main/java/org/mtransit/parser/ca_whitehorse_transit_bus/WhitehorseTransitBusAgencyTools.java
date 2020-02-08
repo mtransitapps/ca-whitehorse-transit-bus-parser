@@ -1,15 +1,9 @@
 package org.mtransit.parser.ca_whitehorse_transit_bus;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.DefaultAgencyTools;
+import org.mtransit.parser.MTLog;
 import org.mtransit.parser.Pair;
 import org.mtransit.parser.SplitUtils;
 import org.mtransit.parser.SplitUtils.RouteTripSpec;
@@ -26,6 +20,12 @@ import org.mtransit.parser.mt.data.MDirectionType;
 import org.mtransit.parser.mt.data.MRoute;
 import org.mtransit.parser.mt.data.MTrip;
 import org.mtransit.parser.mt.data.MTripStop;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 // http://data.whitehorse.ca/
 // http://ww3.whitehorse.ca/Features/GIS/GoogleTransit/Google_transit_feed_docs.zip
@@ -45,11 +45,11 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public void start(String[] args) {
-		System.out.printf("\nGenerating Whitehorse Transit bus data...");
+		MTLog.log("Generating Whitehorse Transit bus data...");
 		long start = System.currentTimeMillis();
-		this.serviceIds = extractUsefulServiceIds(args, this);
+		this.serviceIds = extractUsefulServiceIds(args, this, true);
 		super.start(args);
-		System.out.printf("\nGenerating Whitehorse Transit bus data... DONE in %s.\n", Utils.getPrettyDuration(System.currentTimeMillis() - start));
+		MTLog.log("Generating Whitehorse Transit bus data... DONE in %s.", Utils.getPrettyDuration(System.currentTimeMillis() - start));
 	}
 
 	@Override
@@ -109,20 +109,22 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String getRouteColor(GRoute gRoute) {
-		int rid = (int) getRouteId(gRoute);
-		switch (rid) {
-		// @formatter:off
-		case 1: return COLOR_73A3CE;
-		case 2: return COLOR_79B242;
-		case 3: return COLOR_D42027;
-		case 4: return COLOR_80407E;
-		case 5: return COLOR_EA9025;
-		case 6: return COLOR_14A79D;
-		// @formatter:on
+		if (StringUtils.isEmpty(gRoute.getRouteColor())) {
+			int rid = (int) getRouteId(gRoute);
+			switch (rid) {
+			// @formatter:off
+			case 1: return COLOR_73A3CE;
+			case 2: return COLOR_79B242;
+			case 3: return COLOR_D42027;
+			case 4: return COLOR_80407E;
+			case 5: return COLOR_EA9025;
+			case 6: return COLOR_14A79D;
+			// @formatter:on
+			}
+			MTLog.logFatal("Unexpected route color for %s!", gRoute);
+			return null;
 		}
-		System.out.printf("\nUnexpected route color for %s!\n", gRoute);
-		System.exit(-1);
-		return null;
+		return super.getRouteColor(gRoute);
 	}
 
 	private static final String SEP = " - "; // same as GTFS
@@ -139,47 +141,90 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final String LOBIRD_COPPER_RIDGE_EXPRESS = "Lobird" + SEP + COPPER_RIDGE + " " + EXPRESS;
 
 	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
+
 	static {
-		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
-		map2.put(1l, new RouteTripSpec(1l, //
+		HashMap<Long, RouteTripSpec> map2 = new HashMap<>();
+		map2.put(1L, new RouteTripSpec(1L, //
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, PORTER_CREEK_EXPRESS, //
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, RIVERDALE_NORTH) //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { "16", "46", "17" })) //
+						Arrays.asList(
+								"16",
+								"46",
+								"17"
+						)) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { "17", "3", "16" })) //
+						Arrays.asList(
+								"17",
+								"3",
+								"16"
+						)) //
 				.compileBothTripSort());
-		map2.put(2l, new RouteTripSpec(2l, //
+		map2.put(2L, new RouteTripSpec(2L, //
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, COPPER_RIDGE_GRANGER, //
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, RIVERDALE_SOUTH) //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { "16", "51", "17" })) //
+						Arrays.asList(
+								"16",
+								"51",
+								"17"
+						)) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { "17", "60", "16" })) //
+						Arrays.asList(
+								"17",
+								"60",
+								"16"
+						)) //
 				.compileBothTripSort());
-		map2.put(3l, new RouteTripSpec(3l, //
+		map2.put(3L, new RouteTripSpec(3L, //
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, RR_MC_INTYRE_HILLCREST, //
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, RIVERDALE_NORTH) //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { "16", "87", "17" })) //
+						Arrays.asList(
+								"16",
+								"87",
+								"17"
+						)) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { "17", "83", "16" })) //
+						Arrays.asList(
+								"17",
+								"83",
+								"16"
+						)) //
 				.compileBothTripSort());
-		map2.put(5l, new RouteTripSpec(5l, //
+		map2.put(5L, new RouteTripSpec(5L, //
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, TAKHINI_YUKON_COLLEGE, //
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, LOBIRD_COPPER_RIDGE_EXPRESS) //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { "16", "146", "17" })) //
+						Arrays.asList(
+								"16",
+								"146",
+								"17"
+						)) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { "17", "128", "16" })) //
+						Arrays.asList(
+								"17",
+								"128",
+								"16"
+						)) //
 				.compileBothTripSort());
-		map2.put(6l, new RouteTripSpec(6l, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "PM", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "AM") //
+		map2.put(6L, new RouteTripSpec(6L, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Porter Crk - Whistle Bend", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Ingram - Granger") //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { "139", "38", "141" })) //
+						Arrays.asList( //
+								"139", // Range Rd & Takhini Arena
+								"38", // ++
+								"141" // Industial Road (West side)
+						)) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { "141", "58", "139" })) //
+						Arrays.asList( //
+								"141", // Industial Road (West side)
+								"91", // Hamilton Blvd by the CGC
+								"58", // ++
+								"79", // Hamilton & Valley View Walkway
+								"139" // Range Rd & Takhini Arena
+						)) //
 				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
 	}
@@ -213,12 +258,12 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return; // split
 		}
-		String tripHeadsign = gTrip.getTripHeadsign();
-		if (StringUtils.isEmpty(tripHeadsign)) {
-			tripHeadsign = mRoute.getLongName();
+		String tripHeadSign = gTrip.getTripHeadsign();
+		if (StringUtils.isEmpty(tripHeadSign)) {
+			tripHeadSign = mRoute.getLongName();
 		}
 		int directionId = gTrip.getDirectionId() == null ? 0 : gTrip.getDirectionId();
-		mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), directionId);
+		mTrip.setHeadsignString(cleanTripHeadsign(tripHeadSign), directionId);
 	}
 
 	@Override
@@ -229,12 +274,9 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 		return CleanUtils.cleanLabel(tripHeadsign);
 	}
 
-	private static final Pattern AND = Pattern.compile("((^|\\W){1}(and)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
-	private static final String AND_REPLACEMENT = "$2&$4";
-
 	@Override
 	public String cleanStopName(String gStopName) {
-		gStopName = AND.matcher(gStopName).replaceAll(AND_REPLACEMENT);
+		gStopName = CleanUtils.CLEAN_AND.matcher(gStopName).replaceAll(CleanUtils.CLEAN_AND_REPLACEMENT);
 		gStopName = CleanUtils.cleanSlashes(gStopName);
 		gStopName = CleanUtils.removePoints(gStopName);
 		gStopName = CleanUtils.cleanNumbers(gStopName);
