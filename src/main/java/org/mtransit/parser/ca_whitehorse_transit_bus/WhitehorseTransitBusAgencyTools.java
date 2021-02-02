@@ -275,6 +275,11 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 		);
 	}
 
+	@Override
+	public boolean directionFinderEnabled() {
+		return false; // DISABLED because direction_id & trip head-sign NOT provided
+	}
+
 	@NotNull
 	@Override
 	public String cleanTripHeadsign(@NotNull String tripHeadsign) {
