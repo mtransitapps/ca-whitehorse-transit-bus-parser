@@ -29,8 +29,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-// http://data.whitehorse.ca/
-// http://ww3.whitehorse.ca/Features/GIS/GoogleTransit/Google_transit_feed_docs.zip
+// https://data.whitehorse.ca/
+// https://ww3.whitehorse.ca/Features/GIS/GoogleTransit/Google_transit_feed_docs.zip
 public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(@Nullable String[] args) {
