@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import static org.mtransit.commons.StringUtils.EMPTY;
 
 // https://data.whitehorse.ca/
-// https://ww3.whitehorse.ca/Features/GIS/GoogleTransit/Google_transit_feed_docs.zip
+// https://data.whitehorse.ca/Google_transit_Feed_Docs.zip
 public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(@NotNull String[] args) {
