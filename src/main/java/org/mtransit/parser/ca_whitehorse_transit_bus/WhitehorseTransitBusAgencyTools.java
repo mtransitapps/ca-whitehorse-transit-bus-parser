@@ -3,7 +3,6 @@ package org.mtransit.parser.ca_whitehorse_transit_bus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mtransit.commons.CleanUtils;
-import org.mtransit.commons.StringUtils;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.MTLog;
 import org.mtransit.parser.gtfs.data.GRoute;
@@ -38,11 +37,33 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 		return MAgency.ROUTE_TYPE_BUS;
 	}
 
-	@Nullable
 	@Override
-	public String getRouteShortName(@NotNull GRoute gRoute) {
-		//noinspection deprecation
-		return gRoute.getRouteId(); // use route ID as route short name
+	public boolean defaultRouteIdEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean useRouteShortNameForRouteId() {
+		return true;
+	}
+
+	private static final Pattern STARTS_WITH_R_ = Pattern.compile("(^r )", Pattern.CASE_INSENSITIVE);
+
+	@NotNull
+	@Override
+	public String cleanRouteShortName(@NotNull String routeShortName) {
+		routeShortName = STARTS_WITH_R_.matcher(routeShortName).replaceAll(EMPTY);
+		return super.cleanRouteShortName(routeShortName);
+	}
+
+	@Override
+	public boolean defaultRouteLongNameEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean defaultAgencyColorEnabled() {
+		return true;
 	}
 
 	private static final String AGENCY_COLOR_BLUE = "006666"; // BLUE (from Twitter color)
@@ -57,22 +78,19 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Nullable
 	@Override
-	public String getRouteColor(@NotNull GRoute gRoute) {
-		if (StringUtils.isEmpty(gRoute.getRouteColor())) {
-			final int rid = (int) getRouteId(gRoute);
-			switch (rid) {
-			// @formatter:off
-			case 1: return "73A3CE";
-			case 2: return "79B242";
-			case 3: return "D42027";
-			case 4: return "80407E";
-			case 5: return "EA9025";
-			case 6: return "14A79D";
-			// @formatter:on
-			}
-			throw new MTLog.Fatal("Unexpected route color for %s!", gRoute);
+	public String provideMissingRouteColor(@NotNull GRoute gRoute) {
+		final int rid = (int) getRouteId(gRoute);
+		switch (rid) {
+		// @formatter:off
+		case 1: return "73A3CE";
+		case 2: return "79B242";
+		case 3: return "D42027";
+		case 4: return "80407E";
+		case 5: return "EA9025";
+		case 6: return "14A79D";
+		// @formatter:on
 		}
-		return super.getRouteColor(gRoute);
+		throw new MTLog.Fatal("Unexpected route color for %s!", gRoute);
 	}
 
 	@Override
