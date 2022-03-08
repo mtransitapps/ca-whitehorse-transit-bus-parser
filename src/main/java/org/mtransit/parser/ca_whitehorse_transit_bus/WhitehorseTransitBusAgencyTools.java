@@ -47,6 +47,31 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 		return true;
 	}
 
+	private static final Pattern STARTS_WITH_ROUTE_ = Pattern.compile("(^route )", Pattern.CASE_INSENSITIVE);
+
+	@NotNull
+	@Override
+	public String provideMissingRouteShortName(@NotNull GRoute gRoute) {
+		String routeShortName = gRoute.getRouteLongNameOrDefault();
+		if ("CGC Express".equalsIgnoreCase(routeShortName)) {
+			return "CGC E";
+		}
+		routeShortName = STARTS_WITH_ROUTE_.matcher(routeShortName).replaceAll(EMPTY);
+		routeShortName = CleanUtils.cleanBounds(routeShortName);
+		return routeShortName;
+	}
+
+	@Nullable
+	@Override
+	public Long convertRouteIdFromShortNameNotSupported(@NotNull String routeShortName) {
+		switch (routeShortName) {
+			case "5 SB": return 1_005L;
+			case "5 NB": return 2_005L;
+			case "CGC E": return 100_000L;
+		}
+		return null;
+	}
+
 	private static final Pattern STARTS_WITH_R_ = Pattern.compile("(^r )", Pattern.CASE_INSENSITIVE);
 
 	@NotNull
@@ -91,6 +116,15 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 		// @formatter:on
 		}
 		throw new MTLog.Fatal("Unexpected route color for %s!", gRoute);
+	}
+
+	private static final Pattern STARTS_WITH_ROUTE_AND_ = Pattern.compile("(^route .*)$", Pattern.CASE_INSENSITIVE);
+
+	@NotNull
+	@Override
+	public String cleanDirectionHeadsign(boolean fromStopName, @NotNull String directionHeadSign) {
+		directionHeadSign = STARTS_WITH_ROUTE_AND_.matcher(directionHeadSign).replaceAll(EMPTY);
+		return super.cleanDirectionHeadsign(fromStopName, directionHeadSign);
 	}
 
 	@Override
