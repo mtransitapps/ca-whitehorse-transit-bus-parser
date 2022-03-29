@@ -61,6 +61,16 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 		return routeShortName;
 	}
 
+	@NotNull
+	@Override
+	public String getRouteShortName(@NotNull GRoute gRoute) {
+		switch (gRoute.getRouteLongNameOrDefault()) { // override default route ID from route short name to avoid route merge
+			case "Route 5 Southbound": return "5 SB";
+			case "Route 5 Northbound": return "5 NB";
+		}
+		return super.getRouteShortName(gRoute);
+	}
+
 	@Nullable
 	@Override
 	public Long convertRouteIdFromShortNameNotSupported(@NotNull String routeShortName) {
@@ -74,10 +84,13 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 
 	private static final Pattern STARTS_WITH_R_ = Pattern.compile("(^r )", Pattern.CASE_INSENSITIVE);
 
+	private static final String EXPRESS_SHORT = CleanUtils.cleanWordsReplacement("E");
+
 	@NotNull
 	@Override
 	public String cleanRouteShortName(@NotNull String routeShortName) {
 		routeShortName = STARTS_WITH_R_.matcher(routeShortName).replaceAll(EMPTY);
+		routeShortName = EXPRESS_.matcher(routeShortName).replaceAll(EXPRESS_SHORT);
 		return super.cleanRouteShortName(routeShortName);
 	}
 
