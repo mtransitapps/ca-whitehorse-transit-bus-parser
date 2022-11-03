@@ -65,8 +65,10 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public String getRouteShortName(@NotNull GRoute gRoute) {
 		switch (gRoute.getRouteLongNameOrDefault()) { // override default route ID from route short name to avoid route merge
-			case "Route 5 Southbound": return "5 SB";
-			case "Route 5 Northbound": return "5 NB";
+		case "Route 5 Southbound":
+			return "5 SB";
+		case "Route 5 Northbound":
+			return "5 NB";
 		}
 		return super.getRouteShortName(gRoute);
 	}
@@ -75,9 +77,12 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public Long convertRouteIdFromShortNameNotSupported(@NotNull String routeShortName) {
 		switch (routeShortName) {
-			case "5 SB": return 1_005L;
-			case "5 NB": return 2_005L;
-			case "CGC E": return 100_000L;
+		case "5 SB":
+			return 1_005L;
+		case "5 NB":
+			return 2_005L;
+		case "CGC E":
+			return 100_000L;
 		}
 		return null;
 	}
