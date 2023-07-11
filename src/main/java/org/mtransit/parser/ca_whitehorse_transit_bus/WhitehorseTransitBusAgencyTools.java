@@ -1,5 +1,7 @@
 package org.mtransit.parser.ca_whitehorse_transit_bus;
 
+import static org.mtransit.commons.StringUtils.EMPTY;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mtransit.commons.CleanUtils;
@@ -10,10 +12,7 @@ import org.mtransit.parser.mt.data.MAgency;
 
 import java.util.regex.Pattern;
 
-import static org.mtransit.commons.StringUtils.EMPTY;
-
 // https://data.whitehorse.ca/
-// https://data.whitehorse.ca/Google_transit_Feed_Docs.zip
 public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(@NotNull String[] args) {
@@ -79,6 +78,8 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 		switch (routeShortName) {
 		case "5 SB":
 			return 1_005L;
+		case "5 SB (Detour)":
+			return 3_005L;
 		case "5 NB":
 			return 2_005L;
 		case "CGC E":
@@ -140,9 +141,9 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@NotNull
 	@Override
-	public String cleanDirectionHeadsign(boolean fromStopName, @NotNull String directionHeadSign) {
+	public String cleanDirectionHeadsign(int directionId, boolean fromStopName, @NotNull String directionHeadSign) {
 		directionHeadSign = STARTS_WITH_ROUTE_AND_.matcher(directionHeadSign).replaceAll(EMPTY);
-		return super.cleanDirectionHeadsign(fromStopName, directionHeadSign);
+		return super.cleanDirectionHeadsign(directionId, fromStopName, directionHeadSign);
 	}
 
 	@Override
