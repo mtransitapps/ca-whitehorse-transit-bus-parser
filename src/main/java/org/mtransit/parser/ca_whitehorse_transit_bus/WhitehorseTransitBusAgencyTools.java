@@ -54,10 +54,12 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 		String routeShortName = gRoute.getRouteLongNameOrDefault();
 		if ("CGC Express".equalsIgnoreCase(routeShortName)) {
 			return "CGC E";
+		} else if ("Riverdale Loop".equalsIgnoreCase(routeShortName)) {
+			return "Rvrdl Lp";
 		}
 		routeShortName = STARTS_WITH_ROUTE_.matcher(routeShortName).replaceAll(EMPTY);
 		routeShortName = CleanUtils.cleanBounds(routeShortName);
-		return routeShortName;
+		return cleanRouteShortName(routeShortName);
 	}
 
 	@NotNull
@@ -76,19 +78,31 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public Long convertRouteIdFromShortNameNotSupported(@NotNull String routeShortName) {
 		switch (routeShortName) {
+		case "2 (July 23)":
+			return 2_23_07L;
 		case "5 SB":
 			return 1_005L;
 		case "5 SB (Detour)":
 			return 3_005L;
 		case "5 NB":
 			return 2_005L;
+		case "401 (July 23)":
+			return 401_23_07L;
 		case "CGC E":
 			return 100_000L;
+		case "Rvrdl Lp":
+			return 101_000L;
 		}
 		return null;
 	}
 
 	private static final Pattern STARTS_WITH_R_ = Pattern.compile("(^r )", Pattern.CASE_INSENSITIVE);
+
+	// private static final Pattern ENDS_WITH_MONTH_YEAR_ = Pattern.compile("(_[a-z]+\\d+$)", Pattern.CASE_INSENSITIVE);
+	private static final Pattern ENDS_WITH_MONTH_YEAR_ = Pattern.compile("(_july2023$)", Pattern.CASE_INSENSITIVE);
+
+	// private static final String ENDS_WITH_MONTH_YEAR_REPLACEMENT = EMPTY;
+	private static final String ENDS_WITH_MONTH_YEAR_REPLACEMENT = " (July 23)";
 
 	private static final String EXPRESS_SHORT = CleanUtils.cleanWordsReplacement("E");
 
@@ -96,8 +110,15 @@ public class WhitehorseTransitBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public String cleanRouteShortName(@NotNull String routeShortName) {
 		routeShortName = STARTS_WITH_R_.matcher(routeShortName).replaceAll(EMPTY);
+		routeShortName = ENDS_WITH_MONTH_YEAR_.matcher(routeShortName).replaceAll(ENDS_WITH_MONTH_YEAR_REPLACEMENT);
 		routeShortName = EXPRESS_.matcher(routeShortName).replaceAll(EXPRESS_SHORT);
 		return super.cleanRouteShortName(routeShortName);
+	}
+
+	@Override
+	public @NotNull String cleanRouteLongName(@NotNull String routeLongName) {
+		routeLongName = ENDS_WITH_MONTH_YEAR_.matcher(routeLongName).replaceAll(ENDS_WITH_MONTH_YEAR_REPLACEMENT);
+		return super.cleanRouteLongName(routeLongName);
 	}
 
 	@Override
